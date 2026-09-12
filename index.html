@@ -664,9 +664,41 @@ document.getElementById('scene').innerHTML = `
       <circle cx="11" cy="0" r="3.5" fill="${cols[i%3]}"/></g>`;}
   document.getElementById('footPaws').innerHTML=`<svg width="100%" height="100%" preserveAspectRatio="none">${s}</svg>`;})();
 
-/* ---------- Pepero ---------- */
+/* ---------- Pepero: sacudida + sonido real de croquetas (Web Audio) ---------- */
 const pepero=document.getElementById('pepero');
-pepero.addEventListener('click',()=>{pepero.classList.remove('rattle');void pepero.offsetWidth;pepero.classList.add('rattle');});
+let actx=null,noiseBuf=null;
+function initAudio(){
+  if(actx)return;
+  actx=new (window.AudioContext||window.webkitAudioContext)();
+  const len=Math.floor(actx.sampleRate*0.2);
+  noiseBuf=actx.createBuffer(1,len,actx.sampleRate);
+  const d=noiseBuf.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+}
+function grain(t,freq,vol){
+  const src=actx.createBufferSource();src.buffer=noiseBuf;
+  const bp=actx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=freq;bp.Q.value=1.2;
+  const g=actx.createGain();
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(vol,t+0.003);
+  g.gain.exponentialRampToValueAtTime(0.0008,t+0.06);
+  src.connect(bp);bp.connect(g);g.connect(actx.destination);
+  src.start(t);src.stop(t+0.09);
+}
+function playPepero(){
+  initAudio();
+  if(actx.state==='suspended')actx.resume();
+  const t0=actx.currentTime;
+  const n=7+Math.floor(Math.random()*3);            // 7-9 sacudidas de croquetas
+  for(let i=0;i<n;i++){
+    const t=t0 + i*0.045 + Math.random()*0.02;
+    grain(t, 1800+Math.random()*2600, 0.17+Math.random()*0.12);
+  }
+}
+pepero.addEventListener('click',()=>{
+  pepero.classList.remove('rattle');void pepero.offsetWidth;pepero.classList.add('rattle');
+  try{playPepero();}catch(_){}
+});
 
 /* ---------- Menú móvil (accesible) ---------- */
 const menu=document.getElementById('mobileMenu');
