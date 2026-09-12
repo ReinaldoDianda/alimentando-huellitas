@@ -1,0 +1,656 @@
+<title>Alimentando Huellitas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&display=swap">
+<style>
+  :root{
+    /* Light — mediodía tibio en el parque */
+    --bg:#FBF1E9;
+    --bg-tint:#F7E6D8;
+    --surface:#FFFBF7;
+    --surface-2:#FDEBDD;
+    --ink:#3A2A22;
+    --ink-soft:#7A6353;
+    --accent:#E8912E;        /* miel / croqueta */
+    --accent-strong:#D3760F;
+    --coral:#EC6F55;         /* ternura */
+    --teal:#1E5B54;          /* confianza */
+    --teal-soft:#E2EFEA;
+    --border:#EFD9C7;
+    --shadow:22px 30px 60px -34px rgba(97,58,30,.55);
+    --shadow-sm:10px 14px 30px -18px rgba(97,58,30,.5);
+    --glow:radial-gradient(60% 60% at 50% 8%, rgba(232,145,46,.28), transparent 70%);
+    --night:#F7E6D8;
+    --star:transparent;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      /* Dark — la ruta nocturna bajo el farol */
+      --bg:#221A30;
+      --bg-tint:#2A2140;
+      --surface:#2E2542;
+      --surface-2:#37294B;
+      --ink:#F7EADC;
+      --ink-soft:#C7B2C3;
+      --accent:#F4A93C;
+      --accent-strong:#FFC061;
+      --coral:#F5836B;
+      --teal:#54C6AC;
+      --teal-soft:#22463F;
+      --border:#443655;
+      --shadow:22px 30px 60px -30px rgba(0,0,0,.6);
+      --shadow-sm:10px 16px 34px -18px rgba(0,0,0,.55);
+      --glow:radial-gradient(60% 55% at 50% 6%, rgba(244,169,60,.35), transparent 72%);
+      --night:#1B1428;
+      --star:rgba(255,240,214,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#221A30;--bg-tint:#2A2140;--surface:#2E2542;--surface-2:#37294B;
+    --ink:#F7EADC;--ink-soft:#C7B2C3;--accent:#F4A93C;--accent-strong:#FFC061;
+    --coral:#F5836B;--teal:#54C6AC;--teal-soft:#22463F;--border:#443655;
+    --shadow:22px 30px 60px -30px rgba(0,0,0,.6);--shadow-sm:10px 16px 34px -18px rgba(0,0,0,.55);
+    --glow:radial-gradient(60% 55% at 50% 6%, rgba(244,169,60,.35), transparent 72%);
+    --night:#1B1428;--star:rgba(255,240,214,.55);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:"Baloo 2","Nunito",sans-serif;line-height:1.08;margin:0;text-wrap:balance}
+  p{margin:0}
+  a{color:inherit}
+  .wrap{width:min(1080px,92vw);margin-inline:auto}
+  .eyebrow{
+    font-weight:800;text-transform:uppercase;letter-spacing:.16em;font-size:.72rem;
+    color:var(--accent-strong);display:inline-flex;align-items:center;gap:.5em;
+  }
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--accent);border-radius:2px;display:inline-block}
+
+  /* ---------- Header ---------- */
+  header{position:sticky;top:0;z-index:50;
+    background:color-mix(in srgb,var(--bg) 86%,transparent);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+  .nav{display:flex;align-items:center;gap:1rem;padding:.7rem 0}
+  .brand{display:flex;align-items:center;gap:.6rem;font-family:"Baloo 2";font-weight:800;
+    font-size:1.15rem;text-decoration:none;color:var(--ink)}
+  .brand .mark{width:38px;height:38px;flex:0 0 auto}
+  .brand small{display:block;font-family:"Nunito";font-weight:700;font-size:.62rem;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:-3px}
+  .nav-links{margin-left:auto;display:flex;align-items:center;gap:1.4rem}
+  .nav-links a{text-decoration:none;font-weight:700;color:var(--ink-soft);font-size:.95rem}
+  .nav-links a:hover{color:var(--accent-strong)}
+  .theme-btn{border:1px solid var(--border);background:var(--surface);color:var(--ink);
+    width:40px;height:40px;border-radius:50%;cursor:pointer;display:grid;place-items:center;
+    transition:transform .2s,background .2s}
+  .theme-btn:hover{transform:rotate(-12deg);background:var(--surface-2)}
+  @media(max-width:720px){.nav-links a:not(.btn){display:none}}
+
+  /* ---------- Buttons ---------- */
+  .btn{display:inline-flex;align-items:center;gap:.55rem;font-family:"Baloo 2";font-weight:700;
+    text-decoration:none;border:0;cursor:pointer;border-radius:999px;padding:.72rem 1.4rem;
+    font-size:1rem;transition:transform .18s,box-shadow .18s,background .18s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-primary{background:var(--accent);color:#3A2416;box-shadow:0 12px 24px -12px var(--accent-strong)}
+  .btn-primary:hover{background:var(--accent-strong)}
+  .btn-ghost{background:transparent;color:var(--teal);border:2px solid var(--teal)}
+  .btn-ghost:hover{background:var(--teal);color:#fff}
+  :root[data-theme="dark"] .btn-ghost:hover,
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn-ghost:hover{color:#122a26}}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative;padding:3.4rem 0 2.6rem;text-align:center;isolation:isolate;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:-10% -10% auto -10%;height:120%;
+    background:var(--glow);z-index:-1}
+  .hero-logo{width:118px;height:118px;margin:0 auto .4rem;filter:drop-shadow(0 14px 22px rgba(211,118,15,.35))}
+  .hero h1{font-size:clamp(2.7rem,7vw,4.6rem);font-weight:800;letter-spacing:-.01em}
+  .hero h1 .a{color:var(--ink)}
+  .hero h1 .b{color:var(--accent-strong)}
+  .tag{font-family:"Baloo 2";font-weight:600;color:var(--teal);font-size:clamp(1.05rem,2.4vw,1.35rem);
+    margin-top:.2rem}
+  .lede{max-width:56ch;margin:1.1rem auto 0;color:var(--ink-soft);font-size:1.12rem}
+  .hero-cta{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.7rem}
+  .since{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.6rem;font-weight:700;
+    font-size:.85rem;color:var(--ink-soft);background:var(--surface);border:1px solid var(--border);
+    padding:.35rem .9rem;border-radius:999px}
+  .since b{color:var(--accent-strong)}
+
+  /* ---------- Stats ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);
+    border:1px solid var(--border);border-radius:22px;overflow:hidden;margin-top:2.4rem}
+  .stat{background:var(--surface);padding:1.3rem 1rem;text-align:center}
+  .stat .n{font-family:"Baloo 2";font-weight:800;font-size:1.9rem;color:var(--accent-strong);line-height:1}
+  .stat .l{font-size:.85rem;color:var(--ink-soft);font-weight:700;margin-top:.3rem}
+  @media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+  /* ---------- Sections ---------- */
+  section{padding:3.4rem 0}
+  .sec-head{max-width:60ch;margin-bottom:1.8rem}
+  .sec-head h2{font-size:clamp(1.9rem,4.4vw,2.7rem);font-weight:700;margin:.4rem 0 .5rem}
+  .sec-head p{color:var(--ink-soft);font-size:1.08rem}
+
+  /* Historia */
+  .historia{display:grid;grid-template-columns:1.1fr .9fr;gap:2.4rem;align-items:center}
+  .historia .card-scene{background:var(--night);border-radius:26px;padding:1.4rem;border:1px solid var(--border);
+    box-shadow:var(--shadow);position:relative;overflow:hidden;min-height:280px}
+  .historia p{color:var(--ink-soft);margin-bottom:1rem}
+  .historia p b{color:var(--ink)}
+  @media(max-width:820px){.historia{grid-template-columns:1fr}}
+
+  /* Ruta / pepero */
+  .ruta{background:var(--surface-2)}
+  .ruta-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;align-items:center}
+  .pepero-box{text-align:center}
+  .pepero{width:min(230px,60vw);cursor:pointer}
+  .pepero.rattle{animation:rattle .5s ease}
+  @keyframes rattle{0%,100%{transform:rotate(0)}20%{transform:rotate(-7deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(3deg)}}
+  .pepero-hint{font-weight:700;color:var(--ink-soft);font-size:.9rem;margin-top:.5rem}
+  .steps{display:flex;flex-direction:column;gap:1rem}
+  .step{display:flex;gap:1rem;align-items:flex-start}
+  .step .ic{flex:0 0 auto;width:44px;height:44px;border-radius:14px;background:var(--surface);
+    border:1px solid var(--border);display:grid;place-items:center;color:var(--accent-strong)}
+  .step h3{font-size:1.12rem;font-weight:700;margin-bottom:.15rem}
+  .step p{color:var(--ink-soft);font-size:.98rem}
+  @media(max-width:760px){.ruta-grid{grid-template-columns:1fr}.pepero-box{order:-1}}
+
+  /* Galería adopción */
+  .gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+  @media(max-width:820px){.gal-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.gal-grid{grid-template-columns:1fr}}
+  .cat-card{background:var(--surface);border:1px solid var(--border);border-radius:22px;overflow:hidden;
+    box-shadow:var(--shadow-sm);transition:transform .2s,box-shadow .2s}
+  .cat-card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+  .cat-photo{position:relative;aspect-ratio:4/3;display:grid;place-items:center}
+  .cat-photo svg{width:66%;height:66%}
+  .photo-note{position:absolute;top:.6rem;right:.6rem;background:color-mix(in srgb,var(--ink) 78%,transparent);
+    color:var(--bg);font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    padding:.25rem .55rem;border-radius:999px}
+  .cat-body{padding:1rem 1.15rem 1.2rem}
+  .cat-body .top{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
+  .cat-body h3{font-size:1.35rem;font-weight:700}
+  .cat-body .meta{font-size:.8rem;font-weight:800;color:var(--teal);white-space:nowrap}
+  .cat-body .desc{color:var(--ink-soft);font-size:.95rem;margin:.35rem 0 .8rem}
+  .chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.75rem;font-weight:800;
+    color:var(--accent-strong);background:var(--surface-2);border-radius:999px;padding:.25rem .6rem}
+  .cat-foot{display:flex;justify-content:space-between;align-items:center;margin-top:.9rem}
+  .adopt-link{font-family:"Baloo 2";font-weight:700;color:var(--coral);text-decoration:none;font-size:.95rem}
+  .adopt-link:hover{text-decoration:underline}
+  .gal-caption{text-align:center;color:var(--ink-soft);font-size:.9rem;margin-top:1.6rem}
+  .gal-caption b{color:var(--ink)}
+
+  /* Colaborar */
+  .colab{background:var(--surface-2)}
+  .ways{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-bottom:2.4rem}
+  @media(max-width:760px){.ways{grid-template-columns:1fr 1fr}}
+  @media(max-width:460px){.ways{grid-template-columns:1fr}}
+  .way{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:1.3rem}
+  .way .ic{width:46px;height:46px;border-radius:13px;background:var(--teal-soft);color:var(--teal);
+    display:grid;place-items:center;margin-bottom:.8rem}
+  .way h3{font-size:1.12rem;font-weight:700;margin-bottom:.25rem}
+  .way p{color:var(--ink-soft);font-size:.95rem}
+
+  /* Form */
+  .join{display:grid;grid-template-columns:.9fr 1.1fr;gap:2.4rem;align-items:center;
+    background:var(--surface);border:1px solid var(--border);border-radius:26px;padding:2rem;box-shadow:var(--shadow)}
+  @media(max-width:780px){.join{grid-template-columns:1fr;padding:1.4rem}}
+  .join h2{font-size:clamp(1.7rem,4vw,2.3rem);font-weight:700;margin-bottom:.6rem}
+  .join .lede2{color:var(--ink-soft)}
+  form{display:grid;gap:.8rem}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+  @media(max-width:460px){.row{grid-template-columns:1fr}}
+  label{font-weight:800;font-size:.82rem;color:var(--ink-soft);display:block;margin-bottom:.25rem}
+  input,select,textarea{width:100%;font:inherit;padding:.7rem .85rem;border-radius:13px;
+    border:1.5px solid var(--border);background:var(--bg);color:var(--ink)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+  textarea{resize:vertical;min-height:70px}
+  .form-ok{background:var(--teal-soft);border:1px solid var(--teal);border-radius:16px;padding:1.2rem;
+    text-align:center;font-weight:700;color:var(--teal)}
+  .form-ok .big{font-family:"Baloo 2";font-size:1.3rem;display:block;margin-bottom:.2rem}
+  .demo-note{font-size:.78rem;color:var(--ink-soft);text-align:center}
+
+  /* Social */
+  .social{text-align:center}
+  .social-btns{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.2rem}
+  .sbtn{display:inline-flex;align-items:center;gap:.6rem;text-decoration:none;font-weight:800;
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:.7rem 1.2rem;color:var(--ink)}
+  .sbtn:hover{border-color:var(--accent);color:var(--accent-strong)}
+  .sbtn small{color:var(--ink-soft);font-weight:700}
+
+  /* Footer */
+  footer{background:var(--night);color:var(--ink);border-top:1px solid var(--border);padding:2.6rem 0 2rem;
+    position:relative;overflow:hidden}
+  .foot-in{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;align-items:center;position:relative;z-index:2}
+  .foot-brand{display:flex;align-items:center;gap:.7rem;font-family:"Baloo 2";font-weight:800;font-size:1.2rem}
+  .foot-brand svg{width:42px;height:42px}
+  footer p{color:var(--ink-soft);font-size:.9rem}
+  footer .paws{position:absolute;inset:0;pointer-events:none;opacity:.5}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Alimentando Huellitas — inicio">
+      <span class="mark" id="brandMark"></span>
+      <span>Alimentando Huellitas<small>Guayaquil · desde 2019</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#historia">Historia</a>
+      <a href="#ruta">La ruta</a>
+      <a href="#adopta">Adopta</a>
+      <a href="#colabora">Colabora</a>
+      <a class="btn btn-primary" href="#sumate">Quiero ayudar</a>
+      <button class="theme-btn" id="themeBtn" aria-label="Cambiar tema" title="Cambiar tema"></button>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<a id="top"></a>
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-logo" id="heroLogo"></div>
+    <h1><span class="a">Alimentando</span> <span class="b">Huellitas</span></h1>
+    <p class="tag">Cada noche, un plato de comida y una huella menos con hambre.</p>
+    <p class="lede">Somos dos personas que, al salir del trabajo, recorremos el Parque Samanes y los
+      alrededores de la Pepsico en Guayaquil para alimentar a los gatitos callejeros. Lo hacemos
+      desde 2019 y el sueño es simple: <b>que ningún michi se acueste con hambre.</b></p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#sumate">Sumarme a la labor</a>
+      <a class="btn btn-ghost" href="#adopta">Conocer a los gatitos</a>
+    </div>
+    <div class="since">🐾 Los llamamos con el <b>pepero</b> y ellos vienen corriendo</div>
+
+    <div class="stats">
+      <div class="stat"><div class="n">2019</div><div class="l">empezamos</div></div>
+      <div class="stat"><div class="n">Cada noche</div><div class="l">sin faltar</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">manos que ayudan hoy</div></div>
+      <div class="stat"><div class="n">2 zonas</div><div class="l">Samanes · Pepsico</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HISTORIA ============ -->
+<section id="historia">
+  <div class="wrap historia">
+    <div>
+      <span class="eyebrow">Nuestra historia</span>
+      <h2>Empezó con un plato y no paró más</h2>
+      <p>En 2019 vimos a los primeros gatitos rondando hambrientos por el parque. Esa misma noche
+        volvimos con comida. Al día siguiente eran más, y decidimos que <b>volver era lo correcto</b>.</p>
+      <p>Desde entonces salimos <b>cada noche, después del trabajo</b>. No somos una fundación grande:
+        somos dos personas con un frasco lleno de croquetas y muchas ganas de que estas colonias
+        estén sanas y cuidadas.</p>
+      <p>Repartimos bolitas de comida, dejamos agua limpia y vamos conociendo a cada uno por su
+        nombre. Algunos ya nos esperan en la misma esquina de siempre.</p>
+      <a class="btn btn-ghost" href="#sumate">Quiero acompañarlos una noche</a>
+    </div>
+    <div class="card-scene" id="scene"></div>
+  </div>
+</section>
+
+<!-- ============ RUTA / PEPERO ============ -->
+<section id="ruta" class="ruta">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Así es una noche</span>
+      <h2>El pepero suena y aparecen de entre las sombras</h2>
+      <p>El <b>pepero</b> es un frasco con croquetas que agitamos: los gatitos ya conocen ese sonido
+        y salen a recibirnos. Este es el ritual de cada recorrido.</p>
+    </div>
+    <div class="ruta-grid">
+      <div class="steps">
+        <div class="step">
+          <span class="ic" aria-hidden="true">🌙</span>
+          <div><h3>Salimos al caer la noche</h3><p>Alimentar se puede a cualquier hora; nosotros
+            vamos de noche porque es cuando tenemos tiempo, al salir del trabajo.</p></div>
+        </div>
+        <div class="step">
+          <span class="ic" aria-hidden="true">🫙</span>
+          <div><h3>Sonamos el pepero</h3><p>Agitamos el frasco de croquetas. Ese sonido es la señal:
+            los michis vienen corriendo desde los rincones.</p></div>
+        </div>
+        <div class="step">
+          <span class="ic" aria-hidden="true">🍚</span>
+          <div><h3>Repartimos comida y agua</h3><p>Servimos las bolitas, dejamos agua limpia y nos
+            aseguramos de que hasta el más tímido alcance su porción.</p></div>
+        </div>
+        <div class="step">
+          <span class="ic" aria-hidden="true">💛</span>
+          <div><h3>Revisamos cómo están</h3><p>Vemos si alguno está herido, enfermo o listo para
+            buscar un hogar. A cada uno lo conocemos por su nombre.</p></div>
+        </div>
+      </div>
+      <div class="pepero-box">
+        <svg class="pepero" id="pepero" viewBox="0 0 200 240" role="img" aria-label="Frasco pepero con croquetas">
+          <!-- croquetas que saltan -->
+          <g id="crumbs" fill="var(--accent-strong)">
+            <circle cx="60" cy="34" r="5"/><circle cx="140" cy="30" r="6"/>
+            <circle cx="100" cy="18" r="5"/><circle cx="120" cy="46" r="4"/>
+            <circle cx="80" cy="48" r="4"/>
+          </g>
+          <!-- tapa -->
+          <rect x="66" y="52" width="68" height="18" rx="6" fill="var(--teal)"/>
+          <rect x="72" y="46" width="56" height="12" rx="5" fill="var(--teal)"/>
+          <!-- frasco -->
+          <path d="M64 74 h72 a10 10 0 0 1 10 10 v128 a14 14 0 0 1 -14 14 h-64 a14 14 0 0 1 -14 -14 v-128 a10 10 0 0 1 10 -10 z"
+                fill="var(--surface)" stroke="var(--border)" stroke-width="3"/>
+          <!-- croquetas dentro -->
+          <g fill="var(--accent)">
+            <circle cx="80" cy="200" r="9"/><circle cx="104" cy="210" r="10"/><circle cx="128" cy="198" r="9"/>
+            <circle cx="92" cy="216" r="8"/><circle cx="118" cy="216" r="8"/><circle cx="100" cy="188" r="7"/>
+            <circle cx="128" cy="216" r="6"/><circle cx="74" cy="216" r="6"/>
+          </g>
+          <!-- etiqueta -->
+          <rect x="70" y="120" width="60" height="42" rx="9" fill="var(--coral)"/>
+          <text x="100" y="140" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800"
+                font-size="15" fill="#fff">PEPE</text>
+          <text x="100" y="155" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800"
+                font-size="15" fill="#fff">RO</text>
+        </svg>
+        <p class="pepero-hint">👆 Tócalo para hacerlo sonar</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ADOPCIÓN ============ -->
+<section id="adopta">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">En busca de hogar</span>
+      <h2>Ellos están esperándote</h2>
+      <p>Muchos michis de la ruta son sociables y estarían felices en un hogar. Si alguno te roba el
+        corazón, escríbenos: coordinamos para que lo conozcas en su zona.</p>
+    </div>
+    <div class="gal-grid" id="galeria"></div>
+    <p class="gal-caption">🎨 Por ahora usamos ilustraciones. En la web real aquí irán las
+      <b>fotos verdaderas de cada gatito</b> tomadas en la ruta.</p>
+  </div>
+</section>
+
+<!-- ============ COLABORAR ============ -->
+<section id="colabora" class="colab">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Cómo ayudar</span>
+      <h2>Hay muchas formas de sumar una huella</h2>
+      <p>No hace falta mucho: cualquier gesto multiplica los platos de comida de la noche.</p>
+    </div>
+    <div class="ways" id="ways"></div>
+
+    <div class="join" id="sumate">
+      <div>
+        <span class="eyebrow">Únete</span>
+        <h2>¿Te sumas a la labor?</h2>
+        <p class="lede2">Déjanos tus datos y cuéntanos cómo te gustaría ayudar. Somos dos, y con una
+          mano más llegamos a muchos gatitos más. 💛</p>
+      </div>
+      <div>
+        <form id="joinForm">
+          <div class="row">
+            <div><label for="nom">Tu nombre</label><input id="nom" name="nom" required placeholder="Ej: María"></div>
+            <div><label for="con">WhatsApp o correo</label><input id="con" name="con" required placeholder="Cómo te contactamos"></div>
+          </div>
+          <div><label for="modo">¿Cómo quieres ayudar?</label>
+            <select id="modo" name="modo">
+              <option>Donar comida o insumos</option>
+              <option>Acompañar la ruta nocturna</option>
+              <option>Difundir en redes</option>
+              <option>Adoptar un gatito</option>
+              <option>Aporte económico</option>
+              <option>Otra forma</option>
+            </select>
+          </div>
+          <div><label for="msg">Un mensajito (opcional)</label><textarea id="msg" name="msg" placeholder="Cuéntanos algo..."></textarea></div>
+          <button class="btn btn-primary" type="submit" style="justify-content:center">Enviar mi ayuda 🐾</button>
+          <p class="demo-note">Esta es una maqueta: por ahora tu mensaje se guarda solo en este navegador
+            como demostración.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOCIAL ============ -->
+<section id="redes" class="social">
+  <div class="wrap">
+    <span class="eyebrow" style="justify-content:center">Síguenos</span>
+    <h2 style="font-size:clamp(1.7rem,4vw,2.3rem);margin-top:.4rem">Muy pronto en redes</h2>
+    <p style="color:var(--ink-soft);max-width:52ch;margin:.6rem auto 0">Estamos armando nuestro Instagram
+      y TikTok para mostrar cada noche de ruta, los rescates y los gatitos en adopción.</p>
+    <div class="social-btns">
+      <a class="sbtn" href="#sumate">📷 Instagram <small>@alimentandohuellitas · pronto</small></a>
+      <a class="sbtn" href="#sumate">🎵 TikTok <small>@alimentandohuellitas · pronto</small></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="paws" id="footPaws"></div>
+  <div class="wrap foot-in">
+    <div>
+      <div class="foot-brand"><span id="footMark"></span> Alimentando Huellitas</div>
+      <p style="margin-top:.4rem">Guayaquil, Ecuador · Parque Samanes y alrededores de la Pepsico<br>
+        Alimentando gatitos callejeros cada noche desde 2019.</p>
+    </div>
+    <p>Hecho con 💛 para las huellitas de la ciudad.<br>Maqueta inicial — el punto de partida de algo grande.</p>
+  </div>
+</footer>
+
+<script>
+/* ---------- Logo: huella con corazón ---------- */
+function pawMark(size){
+  return `<svg viewBox="0 0 120 120" width="${size}" height="${size}" role="img" aria-label="Logo huella con corazón">
+    <g fill="var(--accent)">
+      <ellipse cx="33" cy="50" rx="8.5" ry="12" transform="rotate(-14 33 50)"/>
+      <ellipse cx="51" cy="40" rx="9" ry="13"/>
+      <ellipse cx="69" cy="40" rx="9" ry="13"/>
+      <ellipse cx="87" cy="50" rx="8.5" ry="12" transform="rotate(14 87 50)"/>
+    </g>
+    <path d="M60 100 C 44 87 30 76 40 63 C 46 55 57 57 60 65 C 63 57 74 55 80 63 C 90 76 76 87 60 100 Z"
+          fill="var(--coral)"/>
+  </svg>`;
+}
+document.getElementById('brandMark').innerHTML = pawMark(38);
+document.getElementById('heroLogo').innerHTML = pawMark(118);
+document.getElementById('footMark').innerHTML = pawMark(42);
+
+/* ---------- Gatito ilustrado (parametrizable) ---------- */
+function catSVG(fur,light,eye,stripes){
+  const st = stripes ? `
+    <g fill="${shade(fur)}" opacity=".55">
+      <path d="M50 24 q -3 6 0 12 q 3 -6 0 -12"/>
+      <path d="M40 27 q -2 5 1 10 M60 27 q 2 5 -1 10"/>
+    </g>` : '';
+  return `<svg viewBox="0 0 100 106" role="img" aria-label="Gatito ilustrado">
+    <path d="M72 92 C 94 92 94 64 80 60 C 74 58 72 65 77 69 C 84 74 80 86 66 86 Z" fill="${fur}"/>
+    <path d="M26 100 C 22 66 34 58 50 58 C 66 58 78 66 74 100 Z" fill="${fur}"/>
+    <path d="M40 100 C 38 80 44 74 50 74 C 56 74 62 80 60 100 Z" fill="${light}"/>
+    <path d="M30 42 L 25 15 L 49 34 Z" fill="${fur}"/>
+    <path d="M70 42 L 75 15 L 51 34 Z" fill="${fur}"/>
+    <path d="M33 37 L 30 21 L 45 33 Z" fill="#F4A7B0"/>
+    <path d="M67 37 L 70 21 L 55 33 Z" fill="#F4A7B0"/>
+    <circle cx="50" cy="46" r="24" fill="${fur}"/>
+    ${st}
+    <ellipse cx="50" cy="56" rx="18" ry="12" fill="${light}" opacity=".5"/>
+    <ellipse cx="40" cy="46" rx="5" ry="7" fill="${eye}"/>
+    <ellipse cx="60" cy="46" rx="5" ry="7" fill="${eye}"/>
+    <circle cx="41.6" cy="43.6" r="1.7" fill="#fff"/>
+    <circle cx="61.6" cy="43.6" r="1.7" fill="#fff"/>
+    <path d="M46 54 L 54 54 L 50 59 Z" fill="#EF7E92"/>
+    <path d="M50 59 Q 50 63 45 63 M50 59 Q 50 63 55 63" stroke="#5b4636" fill="none" stroke-width="1.5" stroke-linecap="round"/>
+    <g stroke="#7a6353" stroke-width="1.2" stroke-linecap="round" opacity=".55">
+      <line x1="30" y1="52" x2="13" y2="49"/><line x1="30" y1="56" x2="13" y2="58"/>
+      <line x1="70" y1="52" x2="87" y2="49"/><line x1="70" y1="56" x2="87" y2="58"/>
+    </g>
+  </svg>`;
+}
+function shade(hex){ // oscurece un poco para las rayas
+  const n=parseInt(hex.slice(1),16);
+  let r=(n>>16)-40,g=((n>>8)&255)-40,b=(n&255)-40;
+  r=Math.max(0,r);g=Math.max(0,g);b=Math.max(0,b);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+const gatitos=[
+  {n:"Michi", fur:"#E8912E", light:"#FBE0C2", eye:"#6BBF59", str:false, zona:"Samanes", meta:"Hembra · ~1 año",
+   d:"Curiosa y muy arrimada. Es la primera en llegar cuando suena el pepero."},
+  {n:"Nube", fur:"#9AA6B0", light:"#F1F3F5", eye:"#5F9EE0", str:false, zona:"Pepsico", meta:"Hembra · ~2 años",
+   d:"Tranquila y regalona. Busca un regazo tibio donde quedarse a dormir."},
+  {n:"Tigre", fur:"#D98A3D", light:"#F6DFC0", eye:"#8FC24E", str:true, zona:"Samanes", meta:"Macho · ~3 años",
+   d:"El líder de la colonia. Atigrado, valiente y siempre pendiente de los pequeños."},
+  {n:"Canela", fur:"#C0763B", light:"#F0D9BE", eye:"#E0A83C", str:false, zona:"Pepsico", meta:"Hembra · cachorra",
+   d:"Pura energía y juegos. Cachorrita lista para irse a un hogar cuanto antes."},
+  {n:"Pantera", fur:"#524B5C", light:"#8A8496", eye:"#F4C542", str:false, zona:"Samanes", meta:"Macho · ~3 años",
+   d:"Negro elegante, tímido al inicio pero fiel. Un rescate que ganó confianza."},
+  {n:"Luna", fur:"#ECE3D9", light:"#FFFFFF", eye:"#7FB8C9", str:false, zona:"Pepsico", meta:"Hembra · ~2 años",
+   d:"Dulce y blanca como su nombre. Le encanta la comida húmeda de los viernes."}
+];
+document.getElementById('galeria').innerHTML = gatitos.map(g=>`
+  <article class="cat-card">
+    <div class="cat-photo" style="background:linear-gradient(160deg, ${g.light}, ${mix(g.fur)})">
+      <span class="photo-note">Foto próximamente</span>
+      ${catSVG(g.fur,g.light,g.eye,g.str)}
+    </div>
+    <div class="cat-body">
+      <div class="top"><h3>${g.n}</h3><span class="meta">${g.meta}</span></div>
+      <span class="chip">📍 ${g.zona}</span>
+      <p class="desc">${g.d}</p>
+      <div class="cat-foot">
+        <a class="adopt-link" href="#sumate">Quiero adoptar a ${g.n} →</a>
+      </div>
+    </div>
+  </article>`).join('');
+function mix(hex){ // versión muy clara del color para el fondo
+  const n=parseInt(hex.slice(1),16);
+  let r=(n>>16),g=((n>>8)&255),b=(n&255);
+  r=Math.round(r+(255-r)*.7);g=Math.round(g+(255-g)*.7);b=Math.round(b+(255-b)*.7);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+/* ---------- Formas de ayudar ---------- */
+const ways=[
+  {t:"Donar comida",d:"Croquetas, comida húmeda o insumos. Cada bolsa rinde muchas noches.",
+   ic:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 13a8 8 0 0 1 16 0z"/><line x1="3" y1="18" x2="21" y2="18"/><line x1="12" y1="4" x2="12" y2="5.5"/></svg>`},
+  {t:"Acompañar la ruta",d:"Vente una noche a repartir comida con nosotros por Samanes y la Pepsico.",
+   ic:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 5a3 3 0 1 1-3 5 8 8 0 1 0 3-5z"/></svg>`},
+  {t:"Difundir en redes",d:"Comparte a los gatitos en adopción. Un share puede encontrar un hogar.",
+   ic:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg>`},
+  {t:"Adoptar",d:"Dale un hogar a un michi de la calle. Nosotros te ayudamos a conocerlo.",
+   ic:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg>`},
+  {t:"Aporte económico",d:"Ayúdanos con comida, vacunas o esterilizaciones. Todo suma.",
+   ic:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 0 0-8.8 3.2 5 5 0 0 0-8.8-3.2C1 8 3 12 12 19c9-7 11-11 8.8-13.4z"/></svg>`},
+  {t:"Esterilizar",d:"Ayúdanos a controlar las colonias con salud y sin más gatitos en la calle.",
+   ic:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v13"/><circle cx="12" cy="5" r="3"/><path d="M8 14h8"/></svg>`}
+];
+document.getElementById('ways').innerHTML = ways.map(w=>`
+  <div class="way"><div class="ic">${w.ic}</div><h3>${w.t}</h3><p>${w.d}</p></div>`).join('');
+
+/* ---------- Escena nocturna (historia) ---------- */
+document.getElementById('scene').innerHTML = `
+<svg viewBox="0 0 400 300" width="100%" height="100%" role="img" aria-label="Escena nocturna: farol y gatitos comiendo" style="display:block">
+  <defs><radialGradient id="lamp" cx="50%" cy="20%" r="70%">
+    <stop offset="0%" stop-color="var(--accent)" stop-opacity=".9"/>
+    <stop offset="60%" stop-color="var(--accent)" stop-opacity=".12"/>
+    <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></radialGradient></defs>
+  <g fill="var(--star)">
+    <circle cx="60" cy="40" r="1.6"/><circle cx="120" cy="26" r="1.2"/><circle cx="330" cy="46" r="1.6"/>
+    <circle cx="280" cy="30" r="1.1"/><circle cx="360" cy="90" r="1.3"/><circle cx="30" cy="90" r="1.1"/>
+  </g>
+  <!-- luna -->
+  <circle cx="330" cy="55" r="22" fill="var(--accent-strong)" opacity=".85"/>
+  <circle cx="322" cy="50" r="20" fill="var(--night)"/>
+  <!-- cono de luz del farol -->
+  <polygon points="300,60 250,300 380,300" fill="url(#lamp)"/>
+  <!-- poste del farol -->
+  <rect x="296" y="70" width="8" height="200" rx="3" fill="var(--ink-soft)" opacity=".7"/>
+  <path d="M280 66 h40 l-6 14 h-28 z" fill="var(--accent)"/>
+  <circle cx="300" cy="74" r="7" fill="#fff" opacity=".9"/>
+  <!-- suelo -->
+  <rect x="0" y="268" width="400" height="32" fill="var(--surface-2)" opacity=".5"/>
+  <!-- platos -->
+  <ellipse cx="150" cy="272" rx="26" ry="7" fill="var(--coral)"/>
+  <ellipse cx="215" cy="276" rx="24" ry="6" fill="var(--teal)"/>
+  <!-- gatito 1 comiendo -->
+  <g transform="translate(120,214) scale(.62)">
+    <path d="M26 100 C 22 66 34 58 50 58 C 66 58 78 66 74 100 Z" fill="#E8912E"/>
+    <path d="M30 42 L 25 15 L 49 34 Z" fill="#E8912E"/><path d="M70 42 L 75 15 L 51 34 Z" fill="#E8912E"/>
+    <circle cx="50" cy="46" r="24" fill="#E8912E"/>
+    <circle cx="40" cy="48" r="3.2" fill="#3a2a22"/><circle cx="60" cy="48" r="3.2" fill="#3a2a22"/>
+    <path d="M46 54 L54 54 L50 59Z" fill="#EF7E92"/>
+  </g>
+  <!-- gatito 2 sentado -->
+  <g transform="translate(196,206) scale(.7)">
+    <path d="M26 100 C 22 66 34 58 50 58 C 66 58 78 66 74 100 Z" fill="#524B5C"/>
+    <path d="M30 42 L 25 15 L 49 34 Z" fill="#524B5C"/><path d="M70 42 L 75 15 L 51 34 Z" fill="#524B5C"/>
+    <circle cx="50" cy="46" r="24" fill="#524B5C"/>
+    <ellipse cx="40" cy="46" rx="4" ry="6" fill="#F4C542"/><ellipse cx="60" cy="46" rx="4" ry="6" fill="#F4C542"/>
+    <path d="M46 54 L54 54 L50 59Z" fill="#EF7E92"/>
+  </g>
+  <!-- personita con pepero (silueta) -->
+  <g transform="translate(40,150)" fill="var(--teal)">
+    <circle cx="30" cy="14" r="13"/>
+    <path d="M14 30 h32 a8 8 0 0 1 8 8 v70 h-56 v-70 a8 8 0 0 1 8 -8 z"/>
+    <rect x="52" y="44" width="10" height="34" rx="4" transform="rotate(18 57 60)"/>
+  </g>
+  <rect x="96" y="150" width="16" height="22" rx="4" fill="var(--accent)"/>
+</svg>`;
+
+/* ---------- Huellas decorativas del footer ---------- */
+(function(){
+  let s='';const cols=['var(--accent)','var(--coral)','var(--teal)'];
+  for(let i=0;i<7;i++){const x=8+i*14+ (i%2?4:0);const y=i%2?30:62;
+    s+=`<g transform="translate(${x}vw,${y}px) scale(.5) rotate(${i*8-20})" opacity=".18">
+      <circle cx="0" cy="8" r="6" fill="${cols[i%3]}"/><circle cx="-9" cy="0" r="3.5" fill="${cols[i%3]}"/>
+      <circle cx="-3" cy="-6" r="3.5" fill="${cols[i%3]}"/><circle cx="5" cy="-6" r="3.5" fill="${cols[i%3]}"/>
+      <circle cx="11" cy="0" r="3.5" fill="${cols[i%3]}"/></g>`;}
+  document.getElementById('footPaws').innerHTML=`<svg width="100%" height="100%" preserveAspectRatio="none">${s}</svg>`;
+})();
+
+/* ---------- Pepero: suena al tocar ---------- */
+const pepero=document.getElementById('pepero');
+pepero.addEventListener('click',()=>{
+  pepero.classList.remove('rattle');void pepero.offsetWidth;pepero.classList.add('rattle');
+});
+
+/* ---------- Formulario (demo local) ---------- */
+const form=document.getElementById('joinForm');
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  const nom=document.getElementById('nom').value.trim()||'amig@';
+  try{
+    const prev=JSON.parse(localStorage.getItem('ah_ayudas')||'[]');
+    prev.push({nom,con:document.getElementById('con').value,modo:document.getElementById('modo').value,fecha:Date.now()});
+    localStorage.setItem('ah_ayudas',JSON.stringify(prev));
+  }catch(_){}
+  form.innerHTML=`<div class="form-ok"><span class="big">¡Gracias, ${nom}! 🐾</span>
+    Recibimos tu ganas de ayudar. En la web real te escribiríamos para coordinar.
+    Los gatitos de Samanes y la Pepsico te lo agradecen.</div>`;
+});
+
+/* ---------- Tema claro/oscuro ---------- */
+const sun=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>`;
+const moon=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>`;
+const tbtn=document.getElementById('themeBtn');
+function isDark(){const t=document.documentElement.getAttribute('data-theme');
+  if(t)return t==='dark';return matchMedia('(prefers-color-scheme:dark)').matches;}
+function paint(){tbtn.innerHTML=isDark()?sun:moon;}
+try{const saved=localStorage.getItem('ah_theme');if(saved)document.documentElement.setAttribute('data-theme',saved);}catch(_){}
+paint();
+tbtn.addEventListener('click',()=>{
+  const next=isDark()?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  try{localStorage.setItem('ah_theme',next);}catch(_){}
+  paint();
+});
+</script>
